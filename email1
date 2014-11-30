@@ -1,0 +1,45 @@
+__author__ = 'Administrator'
+
+import requests
+import smtplib
+import urllib
+import threading
+import time
+import urllib2
+import cookielib
+import re
+from email.mime.text import MIMEText
+from email.MIMEMultipart import MIMEMultipart
+def action():
+    p=urllib.urlopen("http://store.apple.com/hk-zh/buy-iphone/iphone6/")
+    content=p.read()
+    threading.timer(3,action).start()
+
+mail_host="smtp.163.com"
+mail_user="lwcdeyouxiang"
+mail_pass="187415157123"
+mail_postfix="mail.163.com"
+
+def sendsimplemail (information):
+    msg = MIMEText(information)
+    msg['Subject'] = 'iphone 6,information'
+    msg['From'] = 'lwcdeyouxiang@163.com'
+    try:
+        smtp = smtplib.SMTP()
+        smtp.connect(r'smtp.163.com')
+        smtp.login('lwcdeyouxiang@163.com', '187415157123')
+        smtp.sendmail('lwcdeyouxiang@163.com'," 2841928603@qq.com", msg.as_string())
+        smtp.close()
+    except Exception, e:
+                print e
+
+if __name__ == '__main__':
+    while 1:
+        action()
+        url = 'http://store.apple.com/hk-zh/buy-iphone/iphone6';;
+        html =requests.get(url)
+        reg = '{"dimensionScreensize":"(.*?)","dimensionColor":"(.*?)","dimensionCapacity":"(.*?)","partNumber":".*?","price":"(.*?)","displayShippingQuote":"(.*?)".*?}'
+        mes = re.compile(reg).findall(html.text)
+        for inf in mes:
+            if inf[4]=="有现货":
+               sendsimplemail(information= "iphone6 is available!!!")
